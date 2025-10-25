@@ -5,14 +5,14 @@ const url = process.env.MONGODB_URI
 mongoose.set('strictQuery',false)
 
 mongoose.connect(url)
-  .then(result => {
+  .then(() => {
     console.log('connected to MongoDB')
   })
   .catch(error => {
     console.log('error connecting to MongoDB:', error.message)
   })
 
-const phoneNumberValidator = (phoneNumber) =>{
+const phoneNumberValidator = (phoneNumber) => {
   const regex = /^\d{2,3}-\d{1,}$/
   return regex.test(phoneNumber) && phoneNumber.length >= 8
 }

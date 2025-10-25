@@ -8,11 +8,11 @@ app.use(express.json())
 
 morgan.token('body', (req) => {
   if (['POST', 'PUT', 'PATCH'].includes(req.method)) {
-    return JSON.stringify(req.body);
+    return JSON.stringify(req.body)
   }
-  return '';
-});
-app.use(morgan(':method :url :status :res[content-length] - :response-time ms :body'));
+  return ''
+})
+app.use(morgan(':method :url :status :res[content-length] - :response-time ms :body'))
 
 app.use(express.static('dist'))
 
@@ -20,20 +20,20 @@ app.get('/api/persons', (request, response, next) => {
   Person.find({}).then(persons => {
     response.json(persons)
   })
-  .catch(error => next(error))
+    .catch(error => next(error))
 })
 
 app.post('/api/persons', (request, response, next) => {
-    const body = request.body
+  const body = request.body
 
-    const person = new Person({
-        name: body.name,
-        number: body.number
-    })
+  const person = new Person({
+    name: body.name,
+    number: body.number
+  })
 
-    person.save().then(savedPerson => {
-        response.json(savedPerson)
-    })
+  person.save().then(savedPerson => {
+    response.json(savedPerson)
+  })
     .catch(error => next(error))
 })
 
@@ -57,34 +57,34 @@ app.put('/api/persons/:id', (request, response, next) => {
 })
 
 app.get('/api/persons/:id', (request, response, next) => {
-    const id = request.params.id
-    Person.findById(id).then(person => {
-      if(person){
-        response.json(person)
-        return
-      }
-      response.status(404).end()
-    })
+  const id = request.params.id
+  Person.findById(id).then(person => {
+    if(person){
+      response.json(person)
+      return
+    }
+    response.status(404).end()
+  })
     .catch(error => next(error))
 })
 
 app.delete('/api/persons/:id', (request, response, next) => {
-    const id = request.params.id
-    Person.findByIdAndDelete(id).then(person => {
-      response.status(204).end()
-    })
+  const id = request.params.id
+  Person.findByIdAndDelete(id).then(() => {
+    response.status(204).end()
+  })
     .catch(error => next(error))
 })
 
 app.get('/info', (request, response, next) => {
-  Person.countDocuments().then(length=>{
+  Person.countDocuments().then(length => {
     const html = `
       <p>Phonebook has info for ${length} ${length > 1 ? 'people' : 'person'}</p>
       <p>${new Date().toString()}</p>
     `
     response.send(html)
   })
-  .catch(error => next(error))
+    .catch(error => next(error))
 })
 
 const unknownEndpoint = (request, response) => {
@@ -95,15 +95,12 @@ app.use(unknownEndpoint)
 
 const errorHandler = (error, request, response, next) => {
   console.error(error.message)
-
   if (error.name === 'CastError') {
     return response.status(400).send({ error: 'malformatted id' })
   }
-  
   if (error.name === 'ValidationError') {
     return response.status(400).send({ error: error.message })
   }
-
   next(error)
 }
 
